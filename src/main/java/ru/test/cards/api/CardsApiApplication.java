@@ -1,4 +1,4 @@
-package ru.test.cards.api.cardsapi;
+package ru.test.cards.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CardsApiApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CardsApiApplication.class, args);
+   public static void main(String[] args) {
+       SpringApplication.run(CardsApiApplication.class, args);
+   }
+
+
     }
 
-}
