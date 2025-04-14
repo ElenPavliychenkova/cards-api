@@ -2,11 +2,13 @@ spring:
   application:
     name: cards-api
   datasource:
-    url: localhost:5432/
+    url: jdbc:postgresql://localhost:5433/cards
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-    contexts: dev
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    user: jdbc:postgresql://localhost:5433/cards
+    password: root
+    url: root

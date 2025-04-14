@@ -7,5 +7,4 @@ import ru.test.cards.api.model.entity.Card;
 public class ChangeCardStatusRequest {
 
     private Card.Status status;
-
 }

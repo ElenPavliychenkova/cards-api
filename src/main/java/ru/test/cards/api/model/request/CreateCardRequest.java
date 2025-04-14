@@ -4,6 +4,7 @@ import lombok.Data;
 import ru.test.cards.api.model.entity.Card;
 
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data

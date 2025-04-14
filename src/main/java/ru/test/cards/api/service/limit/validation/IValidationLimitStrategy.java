@@ -3,15 +3,12 @@ package ru.test.cards.api.service.limit.validation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.test.cards.api.model.entity.Account;
-import ru.test.cards.api.model.entity.Card;
-import ru.test.cards.api.model.entity.Limit;
-import ru.test.cards.api.service.account.IAccountService;
+import ru.test.cards.api.exception.ExceedingLimitAmountException;
 import ru.test.cards.api.service.card.ICardService;
 import ru.test.cards.api.service.limit.ILimitService;
+import ru.test.cards.api.service.transaction.ITransactionService;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -19,19 +16,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class IValidationLimitStrategy {
 
-    private final ICardService cardService;
     private final ILimitService limitService;
-    private final IAccountService accountService;
-
-    public boolean validate(UUID cardId, BigDecimal amount) {
-
-        List<Limit> limits = limitService.getAllLimitsByCardId(cardId);
-
-        Card card = cardService.getCard(null, cardId);
-        Account account = accountService.getAccount(card.getAccountId());
+    private final ITransactionService transactionService;
 
 
+    public void validate(UUID cardId, BigDecimal amount) {
 
-        return false;
+        limitService.getAllLimitsByCardId(cardId).forEach(limit -> {
+            BigDecimal transactionsSum = transactionService.findGetSumOfTransaction(cardId, limit.getType());
+            if (transactionsSum.add(amount).compareTo(limit.getAmount()) > 0) {
+                throw new ExceedingLimitAmountException(cardId, limit.getType(), amount);
+            }
+        });
     }
 }

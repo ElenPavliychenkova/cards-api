@@ -21,9 +21,9 @@ public class LimitController {
     private final ILimitService limitService;
 
     @GetMapping
-    public List<Limit> getAllLimits() {
+    public List<Limit> getAllLimits(@RequestParam UUID cardId) {
 
-        return limitService.getAllLimits();
+        return limitService.getAllLimitsByCardId(cardId);
     }
 
     @GetMapping("/{limitId}")
@@ -37,7 +37,6 @@ public class LimitController {
     public Limit creatLimit(@RequestBody CreateLimitRequest createLimitRequest) {
 
         return limitService.createLimit(createLimitRequest);
-
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)

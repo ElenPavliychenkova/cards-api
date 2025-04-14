@@ -1,13 +1,12 @@
 package ru.test.cards.api.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,12 +16,11 @@ import java.util.UUID;
 @Accessors(chain = true)
 @Entity
 @Table(name = "cards")
-
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID cardId;
+    private UUID id;
 
     @Column(name = "owner_id")
     private UUID ownerId;
@@ -33,12 +31,18 @@ public class Card {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "amount")
+    private BigDecimal amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency")
+    private Currency currency;
+
     @ToString.Exclude
     @Column(name = "number", unique = true)
     private String number;
 
     @Column(name = "issue_date", nullable = false)
-    @PastOrPresent
     private LocalDate issueDate = LocalDate.now().plusYears(3);
 
     @Column(name = "cvv", nullable = false)
@@ -58,6 +62,15 @@ public class Card {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    public void addAmount(BigDecimal amount) {
+
+        this.amount = this.amount.add(amount);
+    }
+
+    public void subtractAmount(BigDecimal amount) {
+        this.amount = this.amount.subtract(amount);
+    }
 
 
     public enum Status {

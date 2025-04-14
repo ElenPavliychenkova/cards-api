@@ -20,4 +20,6 @@ public interface ICardService {
     void changeCardStatus(UUID cardId, ChangeCardStatusRequest changeCardStatusRequest);
 
     void validateCard(Card card);
+
+    void save(Card card);
 }

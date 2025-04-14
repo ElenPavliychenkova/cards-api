@@ -6,11 +6,14 @@ import org.springframework.stereotype.Service;
 import ru.test.cards.api.exception.CardNotFoundException;
 import ru.test.cards.api.exception.CardStatusInactiveException;
 import ru.test.cards.api.model.entity.Card;
+import ru.test.cards.api.model.entity.Currency;
 import ru.test.cards.api.model.request.ChangeCardStatusRequest;
 import ru.test.cards.api.model.request.CreateCardRequest;
 import ru.test.cards.api.repository.card.CardRepository;
 import ru.test.cards.api.util.CardUtil;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,13 +26,14 @@ public class CardService implements ICardService {
 
     @Override
     public List<Card> getAllCards(UUID userId) {
-        List<Card> cards = cardRepository.findAllByOwner(userId);
+
+        List<Card> cards = cardRepository.findAllByOwnerId(userId);
         return cards;
     }
 
     @Override
     public Card getCard(UUID userId, UUID cardId) {
-        return cardRepository.findCardByOwnerAndCardId(cardId, userId);
+        return cardRepository.findByIdAndOwnerId(cardId, userId);
     }
 
     @Override
@@ -38,11 +42,13 @@ public class CardService implements ICardService {
         Card card = new Card();
         card.setFirstName(createCardRequest.getFirstName());
         card.setLastName(createCardRequest.getLastName());
+        card.setAmount(BigDecimal.ZERO);
+        card.setCurrency(Currency.RUB);
         card.setType(createCardRequest.getType());
         card.setOwnerId(createCardRequest.getUserId());
         card.setNumber(CardUtil.generateCardNumber());
         card.setCvv(CardUtil.generateCvv());
-        cardRepository.save(card);
+        card.setCreatedAt(LocalDateTime.now());
 
         return cardRepository.save(card);
     }
@@ -69,7 +75,12 @@ public class CardService implements ICardService {
     @Override
     public void validateCard(Card card) {
         if (!card.getStatus().equals(Card.Status.ACTIVE)) {
-            throw new CardStatusInactiveException(card.getCardId());
+            throw new CardStatusInactiveException(card.getId());
         }
+    }
+
+    @Override
+    public void save(Card card) {
+        cardRepository.save(card);
     }
 }

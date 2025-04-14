@@ -2,21 +2,21 @@ version: "3.9"
 
 services:
   cards-db:
-    image: postgres:latest
+    image: library/postgres:13.3
     container_name: cards-db
     environment:
-      POSTGRES_DB: "wallet"
-      POSTGRES_USER: "root"
-      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: cards
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
     ports:
-      - "5432:5432"
+      - "5433:5432"
   cards-api:
     build:
       dockerfile: Dockerfile
       context: .
     container_name: cards-api
     environment:
-      DB_URL: "jdbc:postgresql://cards-db:5432/cards"
+      DB_URL: "jdbc:postgresql://cards-db:5433/cards"
       DB_USER: "root"
       DB_PASS: "root"
     ports:

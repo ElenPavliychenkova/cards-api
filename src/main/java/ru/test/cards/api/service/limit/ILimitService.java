@@ -10,9 +10,6 @@ import java.util.UUID;
 
 public interface ILimitService {
 
-
-    List<Limit> getAllLimits();
-
     List<Limit> getAllLimitsByCardId(UUID cardId);
 
     Limit getLimit(UUID limitId);

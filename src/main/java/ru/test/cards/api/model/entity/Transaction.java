@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -40,16 +41,17 @@ public class Transaction {
     @Column(name = "currency")
     private Currency currency;
 
-    @Column(name = "created_at")
+    @Column(name = "created")
     private LocalDateTime created;
 
-    @Column(name = "updated_ed")
+    @Column(name = "updated")
     private LocalDateTime updated;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private Type type;
 
-    public enum Type {
+    public enum Type  {
         CARD_TO_CARD,
         CASH_IN,
         CASH_OUT

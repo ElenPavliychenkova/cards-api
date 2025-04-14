@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface CardRepository extends JpaRepository <Card, UUID>{
 
-    List<Card> findAllByOwner(UUID ownerId);
+    List<Card> findAllByOwnerId(UUID ownerId);
 
-    Card findCardByOwnerAndCardId(UUID ownerId, UUID cardId);
+    Card findByIdAndOwnerId(UUID ownerId, UUID cardId);
 }

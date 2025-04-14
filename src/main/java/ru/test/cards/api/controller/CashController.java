@@ -2,7 +2,10 @@ package ru.test.cards.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.test.cards.api.model.request.CashInRequest;
 import ru.test.cards.api.model.request.CashOutRequest;
 import ru.test.cards.api.service.cash.CashService;
@@ -18,10 +21,10 @@ public class CashController {
 
     private final CashService cashService;
 
-//    @PostMapping("/in")
-//    public void in(@RequestBody CashInRequest request) {
-//
-//    }
+    @PostMapping("/in")
+    public void in(@RequestBody CashInRequest request) {
+        cashService.in(request);
+    }
 
     @PostMapping("/out")
     public void out(@RequestBody CashOutRequest request) {

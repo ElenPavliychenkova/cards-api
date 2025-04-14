@@ -22,12 +22,6 @@ public class LimitService implements ILimitService {
     private final LimitRepository limitRepository;
 
     @Override
-    public List<Limit> getAllLimits() {
-
-        return limitRepository.findAll();
-    }
-
-    @Override
     public List<Limit> getAllLimitsByCardId(UUID cardId) {
 
         return limitRepository.findAllByCardId(cardId);
@@ -42,7 +36,13 @@ public class LimitService implements ILimitService {
 
     @Override
     public Limit createLimit(CreateLimitRequest createLimitRequest) {
-        return null;
+
+        Limit limit = new Limit();
+        limit.setCardId(createLimitRequest.getCardId());
+        limit.setAmount(createLimitRequest.getAmount());
+        limit.setType(createLimitRequest.getType());
+
+        return limitRepository.save(limit);
     }
 
     @Override
