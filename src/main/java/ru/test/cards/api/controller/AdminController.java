@@ -24,8 +24,6 @@ import java.util.UUID;
 public class AdminController {
 
     private final ICardService cardService;
-    private final ITransactionService transactionService;
-
 
     @GetMapping("/cards/{cardId}")
     public Card getCard(@PathVariable UUID cardId, @RequestParam UUID userId) {
