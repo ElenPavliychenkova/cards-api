@@ -9,6 +9,9 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
-    user: jdbc:postgresql://localhost:5433/cards
+    user: root
     password: root
-    url: root
+    url: jdbc:postgresql://localhost:5433/cards
+
+token:
+  secret: 123QWE890JSFD7s8d9fywifuah32b3kifpa9fgw

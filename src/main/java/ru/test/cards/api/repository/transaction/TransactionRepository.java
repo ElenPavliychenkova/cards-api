@@ -23,4 +23,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             nativeQuery = true
     )
     BigDecimal getSumTransactionByCardIdAndTypeAndPeriod(UUID cardId, List<Transaction.Type> types, LocalDateTime from, LocalDateTime to);
+
+    List<Transaction> findAllByTargetCardId(UUID cardId);
 }

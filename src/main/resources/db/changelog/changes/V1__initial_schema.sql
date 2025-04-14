@@ -1,6 +1,3 @@
--- liquibase formatted sql
-
--- changeset author:init_schema id:2
 CREATE TABLE users
 (
     id       UUID PRIMARY KEY,
@@ -9,7 +6,6 @@ CREATE TABLE users
     role     VARCHAR(20)         NOT NULL
 );
 
--- changeset author:init_schema id:3
 CREATE TABLE cards
 (
     id         UUID PRIMARY KEY,
@@ -28,7 +24,6 @@ CREATE TABLE cards
     CONSTRAINT fk_card_owner FOREIGN KEY (owner_id) REFERENCES users (id)
 );
 
--- changeset author:init_schema id:4
 CREATE TABLE limits
 (
     id          UUID PRIMARY KEY,
@@ -39,7 +34,6 @@ CREATE TABLE limits
     CONSTRAINT fk_limit_card FOREIGN KEY (card_id) REFERENCES cards (id)
 );
 
--- changeset author:init_schema id:5
 CREATE TABLE transactions
 (
     id             UUID PRIMARY KEY,
@@ -56,9 +50,13 @@ CREATE TABLE transactions
     CONSTRAINT fk_transaction_target FOREIGN KEY (target_card_id) REFERENCES cards (id)
 );
 
--- changeset author:init_schema id:6
 CREATE INDEX idx_cards_owner_id ON cards (owner_id);
 CREATE INDEX idx_limits_card_id ON limits (card_id);
 CREATE INDEX idx_transactions_source_card ON transactions (source_card_id);
 CREATE INDEX idx_transactions_target_card ON transactions (target_card_id);
 CREATE INDEX idx_transactions_created ON transactions (created);
+
+
+insert into users (id, email, password, role)
+values ('9f966b49-686c-4559-b3f7-ef4765c893e0', 'user@gmail.com', '$2a$10$zHaJsTmq2j.jES/8yiXoZem/gVn7le4UN1sb8Rc5avx1js8Kve.NK', 'USER'),
+    ('9988c826-3d64-4211-98f2-091e2225c7da', 'admin@gmail.com', '$2a$10$zHaJsTmq2j.jES/8yiXoZem/gVn7le4UN1sb8Rc5avx1js8Kve.NK', 'ADMIN');

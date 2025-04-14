@@ -3,6 +3,7 @@ package ru.test.cards.api.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.test.cards.api.model.entity.Limit;
 import ru.test.cards.api.model.request.ChangeLimitRequest;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/limits")
 @RestController
+@PreAuthorize("hasRole('USER, ADMIN')")
 public class LimitController {
 
     private final ILimitService limitService;

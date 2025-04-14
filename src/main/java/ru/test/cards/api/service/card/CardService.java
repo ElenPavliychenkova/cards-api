@@ -27,8 +27,7 @@ public class CardService implements ICardService {
     @Override
     public List<Card> getAllCards(UUID userId) {
 
-        List<Card> cards = cardRepository.findAllByOwnerId(userId);
-        return cards;
+        return cardRepository.findAllByOwnerId(userId);
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.test.cards.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import ru.test.cards.api.service.cash.CashService;
 @RequiredArgsConstructor
 @RequestMapping("/cash")
 @RestController
+@PreAuthorize("hasRole('USER')")
 public class CashController {
 
     private final CashService cashService;

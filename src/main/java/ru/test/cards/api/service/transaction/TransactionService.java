@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.test.cards.api.exception.ExceedingLimitAmountException;
 import ru.test.cards.api.exception.InsufficientFundsException;
 import ru.test.cards.api.exception.NoOwnerMatchException;
 import ru.test.cards.api.model.entity.Card;
@@ -15,7 +16,7 @@ import ru.test.cards.api.model.request.CashOutRequest;
 import ru.test.cards.api.model.request.TransferCashRequest;
 import ru.test.cards.api.repository.transaction.TransactionRepository;
 import ru.test.cards.api.service.card.ICardService;
-import ru.test.cards.api.service.limit.validation.IValidationLimitStrategy;
+import ru.test.cards.api.service.limit.ILimitService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,22 +36,12 @@ public class TransactionService implements ITransactionService {
 
     private final ICardService cardService;
 
-    private final IValidationLimitStrategy validationLimitStrategy;
+    private final ILimitService limitService;
 
+    @Override
+    public List<Transaction> getAllTransactionByCardId(UUID cardId) {
 
-    public Transaction createTransaction(BigDecimal amount, Transaction.Type type, UUID sourceCardId, UUID targetCardId, Currency currency, String description) {
-
-        Transaction transaction = new Transaction();
-        transaction.setAmount(amount);
-        transaction.setType(type);
-        transaction.setSourceCardId(sourceCardId);
-        transaction.setTargetCardId(targetCardId);
-        transaction.setCurrency(currency);
-        transaction.setCreated(LocalDateTime.now());
-        transaction.setUpdated(LocalDateTime.now());
-        transaction.setDescription(description);
-
-        return transactionRepository.save(transaction);
+        return transactionRepository.findAllByTargetCardId(cardId);
     }
 
     @Override
@@ -81,7 +72,7 @@ public class TransactionService implements ITransactionService {
     @Override
     public void cashOut(CashOutRequest request) {
 
-        validationLimitStrategy.validate(request.getCardId(), request.getAmount());
+        validateLimits(request.getCardId(), request.getAmount());
 
         Card card = cardService.getCard(request.getUserId(), request.getCardId());
         validateEnoughFunds(card, request.getAmount());
@@ -114,7 +105,7 @@ public class TransactionService implements ITransactionService {
         cardService.validateCard(sourceCard);
         cardService.validateCard(targetCard);
         validateEnoughFunds(sourceCard, request.getAmount());
-        validationLimitStrategy.validate(request.getSourceCardId(), request.getAmount());
+        validateLimits(request.getSourceCardId(), request.getAmount());
 
         Transaction transaction = createTransaction(
                 request.getAmount(),
@@ -134,14 +125,38 @@ public class TransactionService implements ITransactionService {
 
     }
 
+    private void validateLimits(UUID cardId, BigDecimal amount) {
+
+        limitService.getAllLimitsByCardId(cardId).forEach(limit -> {
+            BigDecimal transactionsSum = findGetSumOfTransaction(cardId, limit.getType());
+            if (transactionsSum.add(amount).compareTo(limit.getAmount()) > 0) {
+                throw new ExceedingLimitAmountException(cardId, limit.getType(), amount);
+            }
+        });
+    }
+
+    private Transaction createTransaction(BigDecimal amount, Transaction.Type type, UUID sourceCardId, UUID targetCardId, Currency currency, String description) {
+
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setType(type);
+        transaction.setSourceCardId(sourceCardId);
+        transaction.setTargetCardId(targetCardId);
+        transaction.setCurrency(currency);
+        transaction.setCreated(LocalDateTime.now());
+        transaction.setUpdated(LocalDateTime.now());
+        transaction.setDescription(description);
+
+        return transactionRepository.save(transaction);
+    }
+
     private void validateEnoughFunds(Card sourceCard, BigDecimal amount) {
         if (sourceCard.getAmount().compareTo(amount) < 0) {
             throw new InsufficientFundsException(sourceCard.getId());
         }
     }
 
-    @Override
-    public BigDecimal findGetSumOfTransaction(UUID cardId, Limit.LimitType limitType) {
+    private BigDecimal findGetSumOfTransaction(UUID cardId, Limit.LimitType limitType) {
 
         final LocalDateTime now = LocalDateTime.now();
         return switch (limitType) {
@@ -149,6 +164,4 @@ public class TransactionService implements ITransactionService {
             case MONTH -> transactionRepository.getSumTransactionByCardIdAndTypeAndPeriod(cardId, CONSUMABLE_TYPES, now.minusDays(30), now);
         };
     }
-
-
 }
