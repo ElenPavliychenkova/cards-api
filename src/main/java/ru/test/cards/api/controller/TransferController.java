@@ -16,7 +16,7 @@ import ru.test.cards.api.util.SecurityUtil;
 @RequiredArgsConstructor
 @RequestMapping("/transfers")
 @RestController
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasAuthority('USER')")
 public class TransferController {
 
     private final ITransactionService transactionService;

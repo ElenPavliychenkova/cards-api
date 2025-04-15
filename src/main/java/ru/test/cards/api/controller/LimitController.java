@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/limits")
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class LimitController {
 
     private final ILimitService limitService;

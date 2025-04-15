@@ -8,7 +8,6 @@ import java.util.UUID;
 @Data
 public abstract class CashRequest {
 
-    private UUID userId;
 
     private UUID cardId;
 

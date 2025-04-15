@@ -17,6 +17,7 @@ import ru.test.cards.api.model.request.TransferCashRequest;
 import ru.test.cards.api.repository.transaction.TransactionRepository;
 import ru.test.cards.api.service.card.ICardService;
 import ru.test.cards.api.service.limit.ILimitService;
+import ru.test.cards.api.util.SecurityUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,7 +31,10 @@ import java.util.UUID;
 @Transactional
 public class TransactionService implements ITransactionService {
 
-    public static final List<Transaction.Type> CONSUMABLE_TYPES = List.of(Transaction.Type.CARD_TO_CARD, Transaction.Type.CASH_OUT);
+    public static final List<String> CONSUMABLE_TYPES = List.of(
+            Transaction.Type.CARD_TO_CARD.name(),
+            Transaction.Type.CASH_OUT.name()
+    );
 
     private final TransactionRepository transactionRepository;
 
@@ -46,12 +50,12 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public void cashIn(CashInRequest request) {
-        Card card = cardService.getCard(request.getUserId(), request.getCardId());
+        Card card = cardService.getCard(SecurityUtil.getUserId(), request.getCardId());
 
         Transaction transaction = createTransaction(
                 request.getAmount(),
                 Transaction.Type.CASH_IN,
-                null,
+                card.getId(),
                 card.getId(),
                 card.getCurrency(),
                 request.getDescription()
@@ -74,12 +78,12 @@ public class TransactionService implements ITransactionService {
 
         validateLimits(request.getCardId(), request.getAmount());
 
-        Card card = cardService.getCard(request.getUserId(), request.getCardId());
+        Card card = cardService.getCard(SecurityUtil.getUserId(), request.getCardId());
         validateEnoughFunds(card, request.getAmount());
         Transaction transaction = createTransaction(
-                request.getAmount().multiply(new BigDecimal(-1)),
+                request.getAmount(),
                 Transaction.Type.CASH_OUT,
-                null,
+                card.getId(),
                 card.getId(),
                 card.getCurrency(),
                 request.getDescription()
@@ -89,12 +93,12 @@ public class TransactionService implements ITransactionService {
         card.subtractAmount(request.getAmount());
         cardService.save(card);
 
+        transaction.setStatus(Transaction.Status.COMPLETED);
         transactionRepository.save(transaction);
     }
 
     @Override
     public Transaction transferCardToCard(UUID userId, TransferCashRequest request) {
-
 
         Card sourceCard = cardService.getCard(userId, request.getSourceCardId());
         Card targetCard = cardService.getCard(userId, request.getTargetCardId());
@@ -121,6 +125,7 @@ public class TransactionService implements ITransactionService {
         targetCard.addAmount(request.getAmount());
         cardService.save(targetCard);
 
+        transaction.setStatus(Transaction.Status.COMPLETED);
         return transactionRepository.save(transaction);
 
     }

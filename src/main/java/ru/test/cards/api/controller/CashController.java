@@ -18,7 +18,7 @@ import ru.test.cards.api.service.cash.CashService;
 @RequiredArgsConstructor
 @RequestMapping("/cash")
 @RestController
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasAuthority('USER')")
 public class CashController {
 
     private final CashService cashService;

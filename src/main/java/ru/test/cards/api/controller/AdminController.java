@@ -7,11 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.test.cards.api.model.entity.Card;
-import ru.test.cards.api.model.entity.Transaction;
 import ru.test.cards.api.model.request.ChangeCardStatusRequest;
 import ru.test.cards.api.model.request.CreateCardRequest;
 import ru.test.cards.api.service.card.ICardService;
-import ru.test.cards.api.service.transaction.ITransactionService;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
     private final ICardService cardService;

@@ -44,7 +44,7 @@ public class JwtTokenService {
 
         return BEARER + Jwts.builder()
                 .setSubject(user.getUsername())
-                .setExpiration(Date.from(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.UTC)))
+                .setExpiration(Date.from(LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.UTC)))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }

@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/cards/**").authenticated()
+                .requestMatchers("/**").authenticated()
                 .anyRequest()
                 .denyAll()
                 .and()

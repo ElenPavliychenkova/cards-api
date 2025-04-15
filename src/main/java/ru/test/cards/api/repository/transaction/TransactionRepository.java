@@ -13,16 +13,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     @Query(
             value = """
-                    SELECT sum(amount)  
+                    SELECT coalesce(cast(sum(amount) as DECIMAL), 0)  
                     FROM transactions
-                    WHERE target_card_id = :cardId 
+                    WHERE source_card_id = :cardId 
                         AND type IN (:types)
                         AND (created >= :from AND created <= :to)
                         AND status = 'COMPLETED'
                     """,
             nativeQuery = true
     )
-    BigDecimal getSumTransactionByCardIdAndTypeAndPeriod(UUID cardId, List<Transaction.Type> types, LocalDateTime from, LocalDateTime to);
+    BigDecimal getSumTransactionByCardIdAndTypeAndPeriod(UUID cardId, List<String> types, LocalDateTime from, LocalDateTime to);
 
     List<Transaction> findAllByTargetCardId(UUID cardId);
 }
