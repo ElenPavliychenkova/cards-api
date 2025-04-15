@@ -7,3 +7,5 @@ cd /cards-api
 docker compose up 
 
 в resources/postman лежит коллекция эндпоинтов.
+
+localhost:8080/swagger-ui.html

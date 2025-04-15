@@ -25,6 +25,15 @@ import ru.test.cards.api.security.JwtTokenService;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+    private static final String[] SWAGGER_WHITELIST = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/swagger-resources/**",
+            "/webjars/**"
+    };
+
     private final JwtTokenService tokenService;
 
     private final ObjectMapper mapper;
@@ -49,9 +58,9 @@ public class SecurityConfiguration {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
+                .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 .requestMatchers("/**").authenticated()
-                .anyRequest()
-                .denyAll()
+                .anyRequest().denyAll()
                 .and()
                 .addFilterAfter(new JwtTokenFilter(tokenService, mapper), UsernamePasswordAuthenticationFilter.class)
                 .build();

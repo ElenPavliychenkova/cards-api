@@ -14,3 +14,13 @@ spring:
     url: ${DB_URL:jdbc:postgresql://cards-db:5432/cards}
 token:
   secret: ${TOKEN_SECRET:default}
+server:
+  port: 8080
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  default-produces-media-type: application/json
