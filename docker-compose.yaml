@@ -26,6 +26,7 @@ services:
       DB_URL: "jdbc:postgresql://cards-db:5432/cards"
       DB_USER: "root"
       DB_PASS: "root"
+      TOKEN_SECRET: 'avadakedavra-badabooooom'
     ports:
       - "8080:8080"
     depends_on:
