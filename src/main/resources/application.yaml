@@ -2,16 +2,13 @@ spring:
   application:
     name: cards-api
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5433/cards}
+    url: ${DB_URL:jdbc:postgresql://cards-db:5432/cards}
     username: ${DB_USER:root}
     password: ${DB_PASS:root}
     driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
-    user: root
-    password: root
-    url: jdbc:postgresql://localhost:5433/cards
-
-token:
-  secret: 123QWE890JSFD7s8d9fywifuah32b3kifpa9fgw
+    user: ${DB_USER:root}
+    password: ${DB_PASS:root}
+    url: ${DB_URL:jdbc:postgresql://cards-db:5432/cards}
