@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  cards-db:
+    image: postgres:13.3
+    container_name: cards-db
+    environment:
+      POSTGRES_DB: cards
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d cards"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cards-net
+  cards-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cards-api
+    environment:
+      DB_URL: "jdbc:postgresql://cards-db:5432/cards"
+      DB_USER: "root"
+      DB_PASS: "root"
+    ports:
+      - "8080:8080"
+    depends_on:
+      cards-db:
+        condition: service_healthy
+    networks:
+      - cards-net
+networks:
+  cards-net:
+    driver: bridge
